@@ -35,34 +35,34 @@ const INDUSTRIES = [
 ];
 
 const LOCATIONS = [
-  'United States',
-  'Europe',
-  'Asia',
-  'Australia',
-  'Canada',
-  'United Kingdom',
-  'Germany',
-  'France',
-  'Japan',
-  'India'
+  'New York',
+  'San Francisco',
+  'London',
+  'Tokyo',
+  'Berlin',
+  'Singapore',
+  'Toronto',
+  'Sydney',
+  'Paris',
+  'Dubai'
 ];
 
 const KEYWORDS = [
-  'AI',
-  'Machine Learning',
-  'Cloud Computing',
-  'Digital Transformation',
-  'Cybersecurity',
-  'Blockchain',
-  'IoT',
-  'Big Data',
-  'SaaS',
-  'Mobile Apps',
-  'E-commerce',
-  'Fintech',
-  'Healthtech',
-  'Edtech',
-  'Clean Energy'
+  'Atlassian',
+  'Jira',
+  'Confluence',
+  'Bitbucket',
+  'Trello',
+  'Agile',
+  'DevOps',
+  'Cloud',
+  'Enterprise',
+  'Collaboration',
+  'Project Management',
+  'Software Development',
+  'Team Collaboration',
+  'Work Management',
+  'IT Service Management'
 ];
 
 // Create theme first
@@ -107,7 +107,7 @@ function App() {
     industry: '',
     location: '',
     company_size: '',
-    keywords: ''
+    keywords: []
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -135,7 +135,10 @@ function App() {
     setLeads([]);
 
     try {
-      const response = await axios.post('/api/generate-leads', formData);
+      const response = await axios.post('/api/generate-leads', {
+        ...formData,
+        keywords: formData.keywords.join(', ')
+      });
       setLeads(response.data.leads);
     } catch (err) {
       setError(err.response?.data?.detail || 'An error occurred while generating leads');
@@ -165,6 +168,7 @@ function App() {
                     value={formData.industry}
                     onChange={handleChange}
                     label="Industry"
+                    required
                   >
                     {INDUSTRIES.map((industry) => (
                       <MenuItem key={industry} value={industry}>
@@ -182,6 +186,7 @@ function App() {
                     value={formData.location}
                     onChange={handleChange}
                     label="Location"
+                    required
                   >
                     {LOCATIONS.map((location) => (
                       <MenuItem key={location} value={location}>
@@ -199,6 +204,7 @@ function App() {
                     value={formData.company_size}
                     onChange={handleChange}
                     label="Company Size"
+                    required
                   >
                     <MenuItem value="1-10">1-10 employees</MenuItem>
                     <MenuItem value="11-50">11-50 employees</MenuItem>
@@ -210,6 +216,7 @@ function App() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Autocomplete
+                  multiple
                   options={KEYWORDS}
                   value={formData.keywords}
                   onChange={handleKeywordsChange}
@@ -217,11 +224,13 @@ function App() {
                     <TextField
                       {...params}
                       label="Keywords"
-                      placeholder="Select or type keywords"
+                      placeholder="Select keywords"
+                      required
                     />
                   )}
-                  freeSolo
-                  multiple
+                  disablePortal
+                  disableClearable
+                  disableCloseOnSelect
                 />
               </Grid>
               <Grid item xs={12}>
@@ -231,7 +240,7 @@ function App() {
                   color="primary"
                   size="large"
                   startIcon={<SearchIcon />}
-                  disabled={loading}
+                  disabled={loading || !formData.industry || !formData.location || !formData.company_size || formData.keywords.length === 0}
                   sx={{ mt: 2 }}
                 >
                   {loading ? <CircularProgress size={24} /> : 'Generate Leads'}
