@@ -8,7 +8,10 @@
   "builds": [
     {
       "src": "main.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "installCommand": "python3.9 -m pip install --no-deps -r requirements.txt"
+      }
     },
     {
       "src": "src/ui/**",
