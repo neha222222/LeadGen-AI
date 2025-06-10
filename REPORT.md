@@ -1,4 +1,4 @@
-# LeadGen AI: Caprae Capital AI-Readiness Challenge Report
+ # LeadGen AI: Caprae Capital AI-Readiness Challenge Report
 
 ## Approach
 LeadGen AI was developed to demonstrate how AI can drive real-world business impact in lead generation. The tool focuses on prioritizing high-value leads, streamlining sales workflows, and providing actionable insights—all within a modern, user-friendly interface.
