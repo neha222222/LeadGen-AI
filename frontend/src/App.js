@@ -1,85 +1,137 @@
 import React, { useState } from 'react';
-import { 
-  Container, 
-  Box, 
-  Typography, 
-  Button, 
-  Grid, 
-  Paper,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
+import axios from 'axios';
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  Grid,
   CircularProgress,
   Alert,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Paper,
+  createTheme,
   ThemeProvider,
-  createTheme
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import axios from 'axios';
+import ListIcon from '@mui/icons-material/List';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import WorkIcon from '@mui/icons-material/Work';
+import KeyIcon from '@mui/icons-material/Key';
 
-// Create theme first
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#6366F1',
     },
     secondary: {
-      main: '#dc004e',
+      main: '#8B5CF6',
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
     h4: {
+      fontWeight: 700,
+      color: '#333',
+    },
+    h5: {
       fontWeight: 600,
+      color: '#444',
+    },
+    h6: {
+      fontWeight: 600,
+      color: '#555',
+    },
+    body1: {
+      fontSize: '1.05rem',
+      lineHeight: 1.6,
+    },
+    body2: {
+      fontSize: '0.9rem',
+      lineHeight: 1.5,
     },
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: '8px',
           textTransform: 'none',
-          padding: '10px 24px',
+          fontWeight: 600,
+          transition: 'transform 0.2s ease-in-out',
+          '&:hover': {
+            transform: 'scale(1.02)',
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '8px',
+          },
+        },
+      },
+    },
+    MuiSelect: {
+      styleOverrides: {
+        select: {
+          borderRadius: '8px',
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 12,
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          borderRadius: '12px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+        },
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          borderRadius: '8px',
         },
       },
     },
   },
 });
 
-// Predefined options
 const INDUSTRIES = [
   'Technology',
-  'Healthcare',
   'Finance',
-  'Manufacturing',
+  'Healthcare',
   'Retail',
+  'Manufacturing',
   'Education',
-  'Energy',
-  'Transportation',
-  'Media',
-  'Real Estate'
+  'Real Estate',
+  'Hospitality',
+  'Marketing',
+  'Consulting'
 ];
 
 const LOCATIONS = [
   'New York',
   'San Francisco',
   'London',
-  'Tokyo',
   'Berlin',
-  'Singapore',
-  'Toronto',
+  'Tokyo',
   'Sydney',
-  'Paris',
+  'Singapore',
   'Dubai'
+];
+
+const COMPANY_SIZES = [
+  '1-10 employees',
+  '11-50 employees',
+  '51-200 employees',
+  '201-500 employees',
+  '501+ employees'
 ];
 
 const KEYWORDS = [
@@ -139,17 +191,17 @@ function App() {
     <ThemeProvider theme={theme}>
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
         <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography variant="h4" component="h1" gutterBottom align="center">
             AI-Powered Lead Generation
           </Typography>
-          <Typography variant="body1" color="text.secondary" paragraph>
+          <Typography variant="body1" color="text.secondary" paragraph align="center">
             Generate high-quality leads based on your specific criteria
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 4 }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth variant="outlined">
                   <InputLabel>Industry</InputLabel>
                   <Select
                     name="industry"
@@ -167,7 +219,7 @@ function App() {
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth variant="outlined">
                   <InputLabel>Location</InputLabel>
                   <Select
                     name="location"
@@ -185,7 +237,7 @@ function App() {
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth variant="outlined">
                   <InputLabel>Company Size</InputLabel>
                   <Select
                     name="company_size"
@@ -194,16 +246,16 @@ function App() {
                     label="Company Size"
                     required
                   >
-                    <MenuItem value="1-10">1-10 employees</MenuItem>
-                    <MenuItem value="11-50">11-50 employees</MenuItem>
-                    <MenuItem value="51-200">51-200 employees</MenuItem>
-                    <MenuItem value="201-500">201-500 employees</MenuItem>
-                    <MenuItem value="501+">501+ employees</MenuItem>
+                    {COMPANY_SIZES.map((size) => (
+                      <MenuItem key={size} value={size}>
+                        {size}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth variant="outlined">
                   <InputLabel>Keywords</InputLabel>
                   <Select
                     name="keywords"
@@ -220,7 +272,7 @@ function App() {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Button
                   type="submit"
                   variant="contained"
@@ -228,16 +280,16 @@ function App() {
                   size="large"
                   startIcon={<SearchIcon />}
                   disabled={loading || !formData.industry || !formData.location || !formData.company_size || !formData.keywords}
-                  sx={{ mt: 2 }}
+                  sx={{ mt: 2, px: 5, py: 1.5, fontSize: '1.1rem' }}
                 >
-                  {loading ? <CircularProgress size={24} /> : 'Generate Leads'}
+                  {loading ? <CircularProgress size={24} color="inherit" /> : 'Generate Leads'}
                 </Button>
               </Grid>
             </Grid>
           </Box>
 
           {error && (
-            <Alert severity="error" sx={{ mt: 3 }}>
+            <Alert severity="error" sx={{ mt: 3, width: '100%' }}>
               {error}
             </Alert>
           )}
@@ -250,11 +302,11 @@ function App() {
               <Grid container spacing={3}>
                 {leads.map((lead, index) => (
                   <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Paper elevation={2} sx={{ p: 3 }}>
+                    <Paper elevation={2} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
                       <Typography variant="h6" gutterBottom>
                         {lead.company_name}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" paragraph>
+                      <Typography variant="body2" color="text.secondary" paragraph sx={{ flexGrow: 1 }}>
                         {lead.description}
                       </Typography>
                       <Typography variant="body2" color="primary">
@@ -264,8 +316,12 @@ function App() {
                         Location: {lead.location}
                       </Typography>
                       <Typography variant="body2" color="primary">
-                        Size: {lead.company_size} employees
+                        Size: {lead.company_size}
                       </Typography>
+                      <Box sx={{ mt: 2 }}>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Score: {lead.score.toFixed(2)}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Sentiment: {lead.sentiment_score.toFixed(2)}</Typography>
+                      </Box>
                     </Paper>
                   </Grid>
                 ))}
