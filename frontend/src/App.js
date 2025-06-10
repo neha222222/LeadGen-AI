@@ -3,7 +3,6 @@ import {
   Container, 
   Box, 
   Typography, 
-  TextField, 
   Button, 
   Grid, 
   Paper,
@@ -14,8 +13,7 @@ import {
   CircularProgress,
   Alert,
   ThemeProvider,
-  createTheme,
-  Autocomplete
+  createTheme
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
@@ -107,7 +105,7 @@ function App() {
     industry: '',
     location: '',
     company_size: '',
-    keywords: []
+    keywords: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -121,13 +119,6 @@ function App() {
     }));
   };
 
-  const handleKeywordsChange = (event, newValue) => {
-    setFormData(prev => ({
-      ...prev,
-      keywords: newValue
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -135,10 +126,7 @@ function App() {
     setLeads([]);
 
     try {
-      const response = await axios.post('/api/generate-leads', {
-        ...formData,
-        keywords: formData.keywords.join(', ')
-      });
+      const response = await axios.post('/api/generate-leads', formData);
       setLeads(response.data.leads);
     } catch (err) {
       setError(err.response?.data?.detail || 'An error occurred while generating leads');
@@ -215,23 +203,22 @@ function App() {
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Autocomplete
-                  multiple
-                  options={KEYWORDS}
-                  value={formData.keywords}
-                  onChange={handleKeywordsChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Keywords"
-                      placeholder="Select keywords"
-                      required
-                    />
-                  )}
-                  disablePortal
-                  disableClearable
-                  disableCloseOnSelect
-                />
+                <FormControl fullWidth>
+                  <InputLabel>Keywords</InputLabel>
+                  <Select
+                    name="keywords"
+                    value={formData.keywords}
+                    onChange={handleChange}
+                    label="Keywords"
+                    required
+                  >
+                    {KEYWORDS.map((keyword) => (
+                      <MenuItem key={keyword} value={keyword}>
+                        {keyword}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <Button
@@ -240,7 +227,7 @@ function App() {
                   color="primary"
                   size="large"
                   startIcon={<SearchIcon />}
-                  disabled={loading || !formData.industry || !formData.location || !formData.company_size || formData.keywords.length === 0}
+                  disabled={loading || !formData.industry || !formData.location || !formData.company_size || !formData.keywords}
                   sx={{ mt: 2 }}
                 >
                   {loading ? <CircularProgress size={24} /> : 'Generate Leads'}
