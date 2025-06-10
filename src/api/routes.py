@@ -32,122 +32,43 @@ async def generate_leads(request: LeadRequest, background_tasks: BackgroundTasks
     Generate leads based on specified criteria
     """
     try:
-        # Simulated scraping logic (replace with real scraping in production)
-        raw_leads = [
+        # Temporarily return a fixed list of leads for debugging
+        # This bypasses all filtering and simulated scoring to isolate the API functionality
+        fixed_leads = [
             {
-                "company_name": "CryptoTech Solutions",
-                "website": "https://cryptotech.com",
-                "description": "Blockchain solutions for financial services.",
-                "categories": ["Blockchain", "FinTech", "Technology"],
-                "contact_info": {"email": "info@cryptotech.com", "phone": "+1-555-1234"},
-                "industry": "Finance",
-                "location": "New York",
-                "company_size": "51-200 employees"
-            },
-            {
-                "company_name": "NYC Innovators",
-                "website": "https://nycinnovators.com",
-                "description": "Tech innovation hub in New York.",
-                "categories": ["Technology", "Startup"],
-                "contact_info": {"email": "contact@nycinnovators.com", "phone": "+1-555-5678"},
+                "company_name": "Debug Corp 1",
+                "website": "https://debugcorp1.com",
+                "description": "A sample company for testing.",
+                "score": 0.9,
+                "categories": ["Testing", "Software"],
+                "sentiment_score": 0.8,
+                "contact_info": {"email": "info@debugcorp1.com"},
+                "last_updated": datetime.now().isoformat(),
                 "industry": "Technology",
-                "location": "New York",
+                "location": "San Francisco",
                 "company_size": "11-50 employees"
             },
             {
-                "company_name": "Global Retail Corp",
-                "website": "https://globalretail.com",
-                "description": "Leading e-commerce and retail solutions.",
-                "categories": ["Retail", "E-commerce"],
-                "contact_info": {"email": "info@globalretail.com", "phone": "+1-555-2222"},
-                "industry": "Retail",
-                "location": "London",
-                "company_size": "501+ employees"
-            },
-            {
-                "company_name": "Health Innovations Ltd",
-                "website": "https://healthinnovations.com",
-                "description": "Developing cutting-edge healthcare technologies.",
-                "categories": ["Healthcare", "Biotech"],
-                "contact_info": {"email": "contact@healthinnovations.com", "phone": "+44-20-7123-4567"},
-                "industry": "Healthcare",
-                "location": "London",
-                "company_size": "201-500 employees"
-            },
-            {
-                "company_name": "AI Growth Partners",
-                "website": "https://aigrowth.com",
-                "description": "AI-driven business growth consultancy.",
-                "categories": ["AI", "Consulting", "Technology"],
-                "contact_info": {"email": "hello@aigrowth.com", "phone": "+1-555-9999"},
+                "company_name": "Debug Solutions 2",
+                "website": "https://debugsol2.com",
+                "description": "Another sample for verification.",
+                "score": 0.7,
+                "categories": ["Consulting", "AI"],
+                "sentiment_score": 0.6,
+                "contact_info": {"email": "contact@debugsol2.com"},
+                "last_updated": datetime.now().isoformat(),
                 "industry": "Consulting",
-                "location": "San Francisco",
-                "company_size": "1-10 employees"
-            },
-            {
-                "company_name": "Manufacturing Solutions Inc.",
-                "website": "https://manufacturingsol.com",
-                "description": "Advanced manufacturing and industrial automation.",
-                "categories": ["Manufacturing", "Automation"],
-                "contact_info": {"email": "sales@manufacturingsol.com", "phone": "+49-30-987654"},
-                "industry": "Manufacturing",
-                "location": "Berlin",
-                "company_size": "501+ employees"
+                "location": "London",
+                "company_size": "51-200 employees"
             }
         ]
-
-        # Apply filters
-        filtered_leads = []
-        for lead in raw_leads:
-            match = True
-            if request.industry and lead["industry"].lower() != request.industry.lower():
-                match = False
-            if request.location and lead["location"].lower() != request.location.lower():
-                match = False
-            if request.company_size and lead["company_size"].lower() != request.company_size.lower():
-                match = False
-            if request.keywords:
-                lead_keywords = lead["description"].lower() + " ".join(lead["categories"]).lower()
-                if not any(kw.lower() in lead_keywords for kw in request.keywords):
-                    match = False
-            if match:
-                filtered_leads.append(lead)
-
-        # Deduplicate by company_name
-        seen = set()
-        deduped_leads = []
-        for lead in filtered_leads:
-            if lead["company_name"] not in seen:
-                seen.add(lead["company_name"])
-                deduped_leads.append(lead)
-
-        # Enrichment: Add a score and sentiment (simulated)
-        enriched_leads = []
-        for lead in deduped_leads:
-            score = 0.5
-            if "AI" in lead["categories"] or "Blockchain" in lead["categories"]:
-                score += 0.3
-            if "Technology" in lead["categories"] or "FinTech" in lead["categories"]:
-                score += 0.1
-            if request.keywords and any(k.lower() in lead["description"].lower() for k in request.keywords):
-                score += 0.1
-            sentiment_score = 0.7 + 0.2 * ("AI" in lead["categories"])
-            enriched_leads.append(LeadResponse(
-                company_name=lead["company_name"],
-                website=lead["website"],
-                description=lead["description"],
-                score=round(min(score, 1.0), 2),
-                categories=lead["categories"],
-                sentiment_score=sentiment_score,
-                contact_info=lead["contact_info"],
-                last_updated=datetime.now(),
-                industry=lead.get("industry"),
-                location=lead.get("location"),
-                company_size=lead.get("company_size")
-            ))
-        # Sort by score descending
-        enriched_leads.sort(key=lambda x: x.score, reverse=True)
-        return enriched_leads
+        
+        # Convert dictionaries to LeadResponse models
+        leads_to_return = []
+        for lead_data in fixed_leads:
+            leads_to_return.append(LeadResponse(**lead_data))
+            
+        return leads_to_return
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
