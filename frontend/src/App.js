@@ -14,10 +14,56 @@ import {
   CircularProgress,
   Alert,
   ThemeProvider,
-  createTheme
+  createTheme,
+  Autocomplete
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
+
+// Predefined options
+const INDUSTRIES = [
+  'Technology',
+  'Healthcare',
+  'Finance',
+  'Manufacturing',
+  'Retail',
+  'Education',
+  'Energy',
+  'Transportation',
+  'Media',
+  'Real Estate'
+];
+
+const LOCATIONS = [
+  'United States',
+  'Europe',
+  'Asia',
+  'Australia',
+  'Canada',
+  'United Kingdom',
+  'Germany',
+  'France',
+  'Japan',
+  'India'
+];
+
+const KEYWORDS = [
+  'AI',
+  'Machine Learning',
+  'Cloud Computing',
+  'Digital Transformation',
+  'Cybersecurity',
+  'Blockchain',
+  'IoT',
+  'Big Data',
+  'SaaS',
+  'Mobile Apps',
+  'E-commerce',
+  'Fintech',
+  'Healthtech',
+  'Edtech',
+  'Clean Energy'
+];
 
 // Create theme first
 const theme = createTheme({
@@ -75,6 +121,13 @@ function App() {
     }));
   };
 
+  const handleKeywordsChange = (event, newValue) => {
+    setFormData(prev => ({
+      ...prev,
+      keywords: newValue
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -113,11 +166,11 @@ function App() {
                     onChange={handleChange}
                     label="Industry"
                   >
-                    <MenuItem value="Technology">Technology</MenuItem>
-                    <MenuItem value="Healthcare">Healthcare</MenuItem>
-                    <MenuItem value="Finance">Finance</MenuItem>
-                    <MenuItem value="Manufacturing">Manufacturing</MenuItem>
-                    <MenuItem value="Retail">Retail</MenuItem>
+                    {INDUSTRIES.map((industry) => (
+                      <MenuItem key={industry} value={industry}>
+                        {industry}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
@@ -130,11 +183,11 @@ function App() {
                     onChange={handleChange}
                     label="Location"
                   >
-                    <MenuItem value="United States">United States</MenuItem>
-                    <MenuItem value="Europe">Europe</MenuItem>
-                    <MenuItem value="Asia">Asia</MenuItem>
-                    <MenuItem value="Australia">Australia</MenuItem>
-                    <MenuItem value="Canada">Canada</MenuItem>
+                    {LOCATIONS.map((location) => (
+                      <MenuItem key={location} value={location}>
+                        {location}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Grid>
@@ -156,13 +209,19 @@ function App() {
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Keywords"
-                  name="keywords"
+                <Autocomplete
+                  options={KEYWORDS}
                   value={formData.keywords}
-                  onChange={handleChange}
-                  placeholder="e.g., AI, cloud computing, digital transformation"
+                  onChange={handleKeywordsChange}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Keywords"
+                      placeholder="Select or type keywords"
+                    />
+                  )}
+                  freeSolo
+                  multiple
                 />
               </Grid>
               <Grid item xs={12}>
