@@ -126,7 +126,7 @@ function App() {
     setLeads([]);
 
     try {
-      const response = await axios.post('/api/generate-leads', formData);
+      const response = await axios.post('/api/leads/generate', formData);
       setLeads(response.data.leads);
     } catch (err) {
       setError(err.response?.data?.detail || 'An error occurred while generating leads');
