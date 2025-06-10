@@ -178,7 +178,11 @@ function App() {
     setLeads([]);
 
     try {
-      const response = await axios.post('/api/leads/generate', formData);
+      const payload = {
+        ...formData,
+        keywords: formData.keywords ? formData.keywords.split(',').map(kw => kw.trim()) : []
+      };
+      const response = await axios.post('/api/leads/generate', payload);
       setLeads(response.data.leads);
     } catch (err) {
       setError(err.response?.data?.detail || 'An error occurred while generating leads');
