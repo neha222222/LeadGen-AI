@@ -31,8 +31,8 @@ A modern lead generation tool built for Caprae Capital's AI-Readiness Challenge.
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
-cd [repository-name]
+git clone https://github.com/neha222222/LeadGen-AI.git
+cd LeadGen-AI
 ```
 
 2. Set up the backend:
